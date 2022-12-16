@@ -1,3 +1,3 @@
 export default class UpdateTagDto {
-    readonly label: string;
+  readonly label: string;
 }

@@ -1,7 +1,4 @@
-import CreateArticleDto from './CreateArticleDto';
-import UpdateArticleDto from './UpdateArticleDto';
+import CreateArticleDto from "./CreateArticleDto";
+import UpdateArticleDto from "./UpdateArticleDto";
 
-export {
-    CreateArticleDto,
-    UpdateArticleDto,
-};
+export { CreateArticleDto, UpdateArticleDto };
