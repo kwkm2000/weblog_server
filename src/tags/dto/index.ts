@@ -1,7 +1,4 @@
-import CreateTagDto from './CreateTag';
-import UpdateTagDto from './UpdateTag';
+import CreateTagDto from "./CreateTag";
+import UpdateTagDto from "./UpdateTag";
 
-export {
-    CreateTagDto,
-    UpdateTagDto,
-};
+export { CreateTagDto, UpdateTagDto };
