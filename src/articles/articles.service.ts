@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, createConnection } from "typeorm";
+import { Repository } from "typeorm";
 import { Article } from "./interface";
 import { ArticleEntity } from "./article.entity";
 import { CreateArticleDto, UpdateArticleDto } from "./dto";
@@ -23,7 +23,7 @@ export class ArticlesService {
     newArticle.updatedAt = new Date();
     newArticle.tags = await Promise.all(
       createArticleDto.tagIds.map(async (id: number): Promise<TagEntity> => {
-        return await this.tagRepository.findOne(id);
+        return await this.tagRepository.findOneBy({ id });
       })
     );
     return await this.articleRepository.save(newArticle);
@@ -33,7 +33,7 @@ export class ArticlesService {
     id: number,
     updateArticleDto: UpdateArticleDto
   ): Promise<ArticleEntity> {
-    const updateArticle = await this.articleRepository.findOne(id);
+    const updateArticle = await this.articleRepository.findOneBy({ id });
     updateArticle.title = updateArticleDto.title;
     updateArticle.text = updateArticleDto.text;
     updateArticle.updatedAt = new Date();
@@ -45,11 +45,11 @@ export class ArticlesService {
   }
 
   async findOne(id: number): Promise<ArticleEntity> {
-    return await this.articleRepository.findOne(id);
+    return await this.articleRepository.findOneBy({ id });
   }
 
   async remove(id: number): Promise<ArticleEntity> {
-    const article = await this.articleRepository.findOne(id);
+    const article = await this.articleRepository.findOneBy({ id });
     return await this.articleRepository.remove(article);
   }
 }

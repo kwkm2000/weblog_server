@@ -24,7 +24,7 @@ export class TagsService {
     id: number,
     updateTagDto: UpdateTagDto
   ): Promise<TagEntity | null> {
-    const updateTag = await this.tagRepository.findOne(id);
+    const updateTag = await this.tagRepository.findOneBy({ id });
     updateTag.label = updateTagDto.label;
     updateTag.updatedAt = new Date();
     return await this.tagRepository.save(updateTag);
@@ -35,11 +35,11 @@ export class TagsService {
   }
 
   async findOne(id: number): Promise<TagEntity | null> {
-    return await this.tagRepository.findOne(id);
+    return await this.tagRepository.findOneBy({ id });
   }
 
   async remove(id: number): Promise<TagEntity | null> {
-    const tag = await this.tagRepository.findOne(id);
+    const tag = await this.tagRepository.findOneBy({ id });
     return await this.tagRepository.remove(tag);
   }
 }
