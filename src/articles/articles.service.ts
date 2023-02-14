@@ -16,7 +16,7 @@ export class ArticlesService {
   ) {}
 
   async create(createArticleDto: CreateArticleDto): Promise<ArticleEntity> {
-    const newArticle: Article = new ArticleEntity();
+    const newArticle: ArticleEntity = new ArticleEntity();
     newArticle.title = createArticleDto.title;
     newArticle.text = createArticleDto.text;
     newArticle.createdAt = new Date();
@@ -26,6 +26,7 @@ export class ArticlesService {
         return await this.tagRepository.findOneBy({ id });
       })
     );
+
     return await this.articleRepository.save(newArticle);
   }
 
@@ -37,19 +38,26 @@ export class ArticlesService {
     updateArticle.title = updateArticleDto.title;
     updateArticle.text = updateArticleDto.text;
     updateArticle.updatedAt = new Date();
-    return await this.articleRepository.save(updateArticle);
+    const article = await this.articleRepository.save(updateArticle);
+    return { ...article, text: JSON.parse(article.text) };
   }
 
-  async findAll(): Promise<ArticleEntity[]> {
-    return await this.articleRepository.find();
+  async findAll(): Promise<Article[]> {
+    const articles = await this.articleRepository.find();
+
+    return articles.map((article) => {
+      return { ...article, text: JSON.parse(article.text) };
+    });
   }
 
-  async findOne(id: number): Promise<ArticleEntity> {
-    return await this.articleRepository.findOneBy({ id });
-  }
-
-  async remove(id: number): Promise<ArticleEntity> {
+  async findOne(id: number): Promise<Article> {
     const article = await this.articleRepository.findOneBy({ id });
-    return await this.articleRepository.remove(article);
+    return { ...article, text: JSON.parse(article.text) };
+  }
+
+  async remove(id: number): Promise<Article> {
+    const article = await this.articleRepository.findOneBy({ id });
+    await this.articleRepository.remove(article);
+    return { ...article, text: JSON.parse(article.text) };
   }
 }
