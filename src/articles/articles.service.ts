@@ -16,7 +16,6 @@ export class ArticlesService {
   ) {}
 
   async create(createArticleDto: CreateArticleDto): Promise<ArticleEntity> {
-    console.log("createArticleDto", createArticleDto);
     const newArticle: ArticleEntity = new ArticleEntity();
     newArticle.title = createArticleDto.title;
     newArticle.text = createArticleDto.text;
