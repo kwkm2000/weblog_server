@@ -1,6 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { ArticlesService } from "./articles.service";
 import { getRepositoryToken } from "@nestjs/typeorm";
+import { CreateArticleDto, UpdateArticleDto } from "./dto";
 import { ArticleEntity } from "./article.entity";
 import { TagEntity } from "../tags/tag.entity";
 
@@ -105,21 +106,74 @@ describe("ArticlesService", () => {
       });
     });
   });
+
+  describe("update", () => {
+    it("記事の更新", async () => {
+      const id = 1;
+      const updateArticleDto: UpdateArticleDto = {
+        title: "updated title",
+        text: JSON.stringify({
+          blocks: [
+            {
+              key: "8o6ur",
+              text: "Updated Article",
+              type: "unstyled",
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [],
+              data: {},
+            },
+          ],
+          entityMap: {},
+        }),
+        tagIds: [1, 2],
+      };
+
+      const tagEntity1 = new TagEntity();
+      tagEntity1.id = 1;
+      tagEntity1.label = "Tag 1";
+
+      const articleEntity: ArticleEntity = {
+        id: id,
+        title: "test title",
+        text: JSON.stringify({
+          blocks: [
+            {
+              key: "8o6ur",
+              text: "New Article",
+              type: "unstyled",
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [],
+              data: {},
+            },
+          ],
+          entityMap: {},
+        }),
+        createdAt: new Date("2022-01-01T00:00:00.000Z"),
+        updatedAt: new Date("2022-01-01T00:00:00.000Z"),
+        tags: [tagEntity1],
+      };
+
+      articleRepositoryMock.findOneBy.mockResolvedValueOnce(articleEntity);
+      articleRepositoryMock.save.mockImplementationOnce(
+        jest.fn((article: ArticleEntity) => ({
+          ...article,
+          ...updateArticleDto,
+          updatedAt: new Date(),
+        }))
+      );
+
+      const result = await service.update(id, updateArticleDto);
+
+      expect(articleRepositoryMock.findOneBy).toHaveBeenCalledWith({ id: id });
+
+      expect(result).toEqual({
+        ...articleEntity,
+        ...updateArticleDto,
+        updatedAt: expect.any(Date),
+        text: JSON.parse(articleEntity.text),
+      });
+    });
+  });
 });
-// describe('update', () => {
-//   it('should update an article', async () => {
-//     const id = 1;
-//     const updateArticleDto = {
-//       title: 'Test article (updated)',
-//       text: 'This is an updated test article.',
-//     };
-
-//     const articleEntity = new ArticleEntity();
-//     articleEntity.id = id;
-//     articleEntity.title = updateArticleDto.title;
-//     articleEntity.text = updateArticleDto.text;
-//     articleEntity.createdAt = new Date();
-//     articleEntity.updatedAt = new Date();
-
-//     articleRepositoryMock.findOneBy.mockResolvedValueOnce(articleEntity);
-//     articleRepositoryMock.save.mockResolvedValueOnce(article
