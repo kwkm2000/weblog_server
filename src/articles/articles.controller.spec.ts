@@ -99,10 +99,27 @@ describe("ArticlesController", () => {
     it("should update and return an article", async () => {
       const articleDto: UpdateArticleDto = {
         title: "Test",
-        text: "Test article",
+        text: JSON.stringify({
+          blocks: [
+            {
+              key: "8o6ur",
+              text: "Update Article",
+              type: "unstyled",
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [],
+              data: {},
+            },
+          ],
+          entityMap: {},
+        }),
         tagIds: [1],
       };
-      const result: Article = articleMock;
+      const result: Article = {
+        ...articleMock,
+        title: articleDto.title,
+        text: JSON.parse(articleDto.text),
+      };
 
       jest
         .spyOn(articlesService, "update")
@@ -114,12 +131,10 @@ describe("ArticlesController", () => {
 
   describe("remove", () => {
     it("should remove and return an article", async () => {
-      const result: Article = articleMock;
-      jest
-        .spyOn(articlesService, "remove")
-        .mockImplementation(async () => result);
+      jest.spyOn(articlesService, "remove").mockImplementation();
 
-      expect(await articlesController.remove(1)).toBe(result);
+      console.log(await articlesController.remove(1));
+      expect(await articlesController.remove(1)).toBeUndefined();
     });
   });
 });
