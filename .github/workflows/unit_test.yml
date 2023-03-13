@@ -16,7 +16,8 @@ jobs:
         with:
           node-version: 18
 
-      - name: Unit test
-        run: |
-          npm install
-          npm run test
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Unit Test
+        run: npm run test
