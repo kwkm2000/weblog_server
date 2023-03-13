@@ -10,7 +10,6 @@ import {
 import { ArticlesService } from "./articles.service";
 import { Article } from "./interface";
 import { CreateArticleDto, UpdateArticleDto } from "./dto";
-import { ArticleEntity } from "./article.entity";
 
 @Controller("articles")
 export class ArticlesController {
@@ -27,9 +26,7 @@ export class ArticlesController {
   }
 
   @Post()
-  async create(
-    @Body() createArticleDto: CreateArticleDto
-  ): Promise<ArticleEntity> {
+  async create(@Body() createArticleDto: CreateArticleDto): Promise<Article> {
     return this.articlesService.create(createArticleDto);
   }
 
@@ -37,8 +34,8 @@ export class ArticlesController {
   async update(
     @Param("id") id: number,
     @Body() updateArticleDto: UpdateArticleDto
-  ) {
-    this.articlesService.update(id, updateArticleDto);
+  ): Promise<Article> {
+    return this.articlesService.update(id, updateArticleDto);
   }
 
   @Delete(":id")
