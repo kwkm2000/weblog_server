@@ -58,9 +58,8 @@ export class ArticlesService {
     return { ...article, text: JSON.parse(article.text) };
   }
 
-  async remove(id: number): Promise<Article> {
+  async remove(id: number): Promise<void> {
     const article = await this.articleRepository.findOneBy({ id });
     await this.articleRepository.remove(article);
-    return { ...article, text: JSON.parse(article.text) };
   }
 }

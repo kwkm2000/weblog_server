@@ -176,4 +176,127 @@ describe("ArticlesService", () => {
       });
     });
   });
+
+  describe("findAll", () => {
+    it("記事全件取得", async () => {
+      const mockArticles = [
+        {
+          id: 1,
+          title: "Test Article 1",
+          text: JSON.stringify({
+            blocks: [
+              {
+                key: "8o6ur",
+                text: "New Article1",
+                type: "unstyled",
+                depth: 0,
+                inlineStyleRanges: [],
+                entityRanges: [],
+                data: {},
+              },
+            ],
+            entityMap: {},
+          }),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 2,
+          title: "Test Article 2",
+          text: JSON.stringify({
+            blocks: [
+              {
+                key: "8o6ur",
+                text: "New Article2",
+                type: "unstyled",
+                depth: 0,
+                inlineStyleRanges: [],
+                entityRanges: [],
+                data: {},
+              },
+            ],
+            entityMap: {},
+          }),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ];
+      articleRepositoryMock.find.mockResolvedValueOnce(mockArticles);
+
+      const result = await service.findAll();
+
+      expect(result).toEqual(
+        mockArticles.map((mockArticle) => {
+          return { ...mockArticle, text: JSON.parse(mockArticle.text) };
+        })
+      );
+    });
+  });
+
+  describe("findOne", () => {
+    it("IDに紐づく記事を取得", async () => {
+      const mockArticle = {
+        id: 1,
+        title: "Test Article 1",
+        text: JSON.stringify({
+          blocks: [
+            {
+              key: "8o6ur",
+              text: "New Article1",
+              type: "unstyled",
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [],
+              data: {},
+            },
+          ],
+          entityMap: {},
+        }),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      articleRepositoryMock.findOneBy.mockResolvedValueOnce(mockArticle);
+
+      const result = await service.findOne(1);
+
+      expect(result).toEqual({
+        ...mockArticle,
+        text: JSON.parse(mockArticle.text),
+      });
+    });
+  });
+
+  describe("remove", () => {
+    it("記事の削除", async () => {
+      const mockArticle = {
+        id: 1,
+        title: "Test Article 1",
+        text: JSON.stringify({
+          blocks: [
+            {
+              key: "8o6ur",
+              text: "New Article1",
+              type: "unstyled",
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [],
+              data: {},
+            },
+          ],
+          entityMap: {},
+        }),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      articleRepositoryMock.remove.mockResolvedValueOnce(mockArticle);
+      articleRepositoryMock.findOneBy.mockResolvedValueOnce(mockArticle);
+      await service.remove(mockArticle.id);
+
+      expect(articleRepositoryMock.findOneBy).toHaveBeenCalledWith({
+        id: mockArticle.id,
+      });
+      expect(articleRepositoryMock.remove).toHaveBeenCalledWith(mockArticle);
+    });
+  });
 });
