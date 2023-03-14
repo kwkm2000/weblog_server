@@ -48,7 +48,7 @@ export class ArticlesService {
   async findAll(): Promise<Article[]> {
     const articles = await this.articleRepository.find();
     const sortedArticles = [...articles].sort((a, b) =>
-      a.createdAt > b.createdAt ? 1 : -1
+      a.createdAt > b.createdAt ? -1 : 1
     );
 
     return sortedArticles.map((article) => {
