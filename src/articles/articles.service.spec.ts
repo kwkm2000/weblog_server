@@ -250,7 +250,7 @@ describe("ArticlesService", () => {
       const result = await service.findAll();
 
       const sortedArticles = [...mockArticles].sort((a, b) =>
-        a.createdAt > b.createdAt ? 1 : -1
+        a.createdAt > b.createdAt ? -1 : 1
       );
 
       expect(result).toEqual(
