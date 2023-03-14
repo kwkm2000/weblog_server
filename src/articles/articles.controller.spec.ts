@@ -11,6 +11,10 @@ import { Repository } from "typeorm";
 describe("ArticlesController", () => {
   let articlesController: ArticlesController;
   let articlesService: ArticlesService;
+  const addDay = (addNumber: number): Date => {
+    const now = new Date();
+    return new Date(now.setDate(now.getDate() + addNumber));
+  };
   const articleMock: Article = {
     id: 1,
     title: "Test",
@@ -29,6 +33,48 @@ describe("ArticlesController", () => {
       entityMap: {},
     },
     createdAt: new Date(),
+    updatedAt: new Date(),
+    tags: [],
+  };
+  const articleMock2: Article = {
+    id: 2,
+    title: "hoge",
+    text: {
+      blocks: [
+        {
+          key: "8o6ur",
+          text: "New Article",
+          type: "unstyled",
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: [],
+          data: {},
+        },
+      ],
+      entityMap: {},
+    },
+    createdAt: addDay(-40),
+    updatedAt: new Date(),
+    tags: [],
+  };
+  const articleMock3: Article = {
+    id: 3,
+    title: "fuga",
+    text: {
+      blocks: [
+        {
+          key: "8o6ur",
+          text: "New Article",
+          type: "unstyled",
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: [],
+          data: {},
+        },
+      ],
+      entityMap: {},
+    },
+    createdAt: addDay(-3),
     updatedAt: new Date(),
     tags: [],
   };
@@ -55,8 +101,8 @@ describe("ArticlesController", () => {
   });
 
   describe("findAll", () => {
-    it("should return an array of articles", async () => {
-      const result: Article[] = [articleMock];
+    it("記事を作成日が新しい順に全件取得", async () => {
+      const result: Article[] = [articleMock, articleMock3, articleMock2];
 
       jest
         .spyOn(articlesService, "findAll")
@@ -133,7 +179,6 @@ describe("ArticlesController", () => {
     it("should remove and return an article", async () => {
       jest.spyOn(articlesService, "remove").mockImplementation();
 
-      console.log(await articlesController.remove(1));
       expect(await articlesController.remove(1)).toBeUndefined();
     });
   });
