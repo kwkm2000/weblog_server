@@ -47,8 +47,11 @@ export class ArticlesService {
 
   async findAll(): Promise<Article[]> {
     const articles = await this.articleRepository.find();
+    const sortedArticles = [...articles].sort((a, b) =>
+      a.createdAt > b.createdAt ? 1 : -1
+    );
 
-    return articles.map((article) => {
+    return sortedArticles.map((article) => {
       return { ...article, text: JSON.parse(article.text) };
     });
   }

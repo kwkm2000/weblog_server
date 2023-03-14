@@ -179,6 +179,10 @@ describe("ArticlesService", () => {
 
   describe("findAll", () => {
     it("記事全件取得", async () => {
+      const addDay = (addNumber: number): Date => {
+        const now = new Date();
+        return new Date(now.setDate(now.getDate() + addNumber));
+      };
       const mockArticles = [
         {
           id: 1,
@@ -217,7 +221,27 @@ describe("ArticlesService", () => {
             ],
             entityMap: {},
           }),
-          createdAt: new Date(),
+          createdAt: addDay(-40),
+          updatedAt: new Date(),
+        },
+        {
+          id: 3,
+          title: "Test Article 3",
+          text: JSON.stringify({
+            blocks: [
+              {
+                key: "8o6ur",
+                text: "New Article2",
+                type: "unstyled",
+                depth: 0,
+                inlineStyleRanges: [],
+                entityRanges: [],
+                data: {},
+              },
+            ],
+            entityMap: {},
+          }),
+          createdAt: addDay(-3),
           updatedAt: new Date(),
         },
       ];
@@ -225,8 +249,12 @@ describe("ArticlesService", () => {
 
       const result = await service.findAll();
 
+      const sortedArticles = [...mockArticles].sort((a, b) =>
+        a.createdAt > b.createdAt ? 1 : -1
+      );
+
       expect(result).toEqual(
-        mockArticles.map((mockArticle) => {
+        sortedArticles.map((mockArticle) => {
           return { ...mockArticle, text: JSON.parse(mockArticle.text) };
         })
       );
