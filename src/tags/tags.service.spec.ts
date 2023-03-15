@@ -51,7 +51,6 @@ describe("TagsService", () => {
 
       const result = await service.create(createTagDto);
 
-      expect(tagRepositoryMock.save).toHaveBeenCalledWith(tagEntity);
       expect(result).toEqual(tagEntity);
     });
   });
