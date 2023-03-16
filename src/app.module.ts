@@ -6,6 +6,8 @@ import { ArticleEntity } from "./articles/article.entity";
 import { TagEntity } from "./tags/tag.entity";
 import { ArticleModule } from "./articles/article.module";
 import { TagModule } from "./tags/tag.module";
+import { AuthModule } from "./auth/auth.module";
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { TagModule } from "./tags/tag.module";
     }),
     ArticleModule,
     TagModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
