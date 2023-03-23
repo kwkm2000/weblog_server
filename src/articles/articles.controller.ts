@@ -6,10 +6,12 @@ import {
   Body,
   Delete,
   Put,
+  UseGuards,
 } from "@nestjs/common";
 import { ArticlesService } from "./articles.service";
 import { Article } from "./interface";
 import { CreateArticleDto, UpdateArticleDto } from "./dto";
+import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 
 @Controller("articles")
 export class ArticlesController {
