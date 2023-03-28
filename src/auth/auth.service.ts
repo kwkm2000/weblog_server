@@ -17,6 +17,7 @@ export class AuthService {
 
     if (user && user.password === validateUser.password) {
       const { password, ...result } = user;
+
       return result;
     }
     return null;
