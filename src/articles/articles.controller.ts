@@ -27,11 +27,13 @@ export class ArticlesController {
     return this.articlesService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() createArticleDto: CreateArticleDto): Promise<Article> {
     return this.articlesService.create(createArticleDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put(":id")
   async update(
     @Param("id") id: number,
@@ -40,6 +42,7 @@ export class ArticlesController {
     return this.articlesService.update(id, updateArticleDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(":id")
   remove(@Param("id") id: number): Promise<void> {
     return this.articlesService.remove(id);
