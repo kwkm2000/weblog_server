@@ -21,7 +21,7 @@ import { AuthController } from "./auth.controller";
           },
         };
       },
-      inject: [ConfigService], // useFactoryで使う為にConfigServiceを注入する
+      inject: [ConfigService],
     }),
   ],
 
