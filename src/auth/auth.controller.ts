@@ -8,12 +8,6 @@ import { BasicAuthGuard } from "./basic-auth.guard";
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @UseGuards(BasicAuthGuard)
-  @Post("register")
-  async register() {
-    return "register!!";
-  }
-
   @UseGuards(LocalAuthGuard)
   @Post("login")
   async login(@Request() req) {
