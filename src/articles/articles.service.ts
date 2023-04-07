@@ -5,6 +5,7 @@ import { Article } from "./interface";
 import { ArticleEntity } from "./article.entity";
 import { CreateArticleDto, UpdateArticleDto } from "./dto";
 import { TagEntity } from "../tags/tag.entity";
+import { triggerWorkflow } from "../lib/trigger-workflow";
 
 @Injectable()
 export class ArticlesService {
@@ -26,8 +27,11 @@ export class ArticlesService {
         return await this.tagRepository.findOneBy({ id });
       })
     );
-
     const articleEntity = await this.articleRepository.save(newArticle);
+
+    if (process.env.ENV === "production") {
+      triggerWorkflow();
+    }
 
     return { ...articleEntity, text: JSON.parse(articleEntity.text) };
   }
@@ -41,6 +45,10 @@ export class ArticlesService {
     updateArticle.text = updateArticleDto.text;
     updateArticle.updatedAt = new Date();
     const articleEntity = await this.articleRepository.save(updateArticle);
+
+    if (process.env.ENV === "production") {
+      triggerWorkflow();
+    }
 
     return { ...articleEntity, text: JSON.parse(articleEntity.text) };
   }
@@ -58,11 +66,16 @@ export class ArticlesService {
 
   async findOne(id: number): Promise<Article> {
     const article = await this.articleRepository.findOneBy({ id });
+
     return { ...article, text: JSON.parse(article.text) };
   }
 
   async remove(id: number): Promise<void> {
     const article = await this.articleRepository.findOneBy({ id });
     await this.articleRepository.remove(article);
+
+    if (process.env.ENV === "production") {
+      triggerWorkflow();
+    }
   }
 }
