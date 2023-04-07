@@ -41,7 +41,7 @@ export class TagsController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(":id")
-  remove(@Param("id") id: number): Promise<Tag> {
+  remove(@Param("id") id: number): Promise<void> {
     return this.tagsService.remove(id);
   }
 }
