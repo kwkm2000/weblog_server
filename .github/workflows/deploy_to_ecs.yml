@@ -49,5 +49,5 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
-          ssh -i private_key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $USER@$HOST "cd $DEPLOY_DIR && tar xzvf app.tar.gz && rm app.tar.gz && npm ci && pm2 restart"
+          ssh -i private_key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $USER@$HOST "cd $DEPLOY_DIR && tar xzvf app.tar.gz && rm app.tar.gz && npm ci && pm2 restart weblog_server"
           rm -f private_key.pem
