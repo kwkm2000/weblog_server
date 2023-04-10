@@ -29,7 +29,7 @@ jobs:
 
       - name: Upload files to EC2
         env:
-          DEPLOY_DIRS: /home/ec2-user/weblog_server
+          DEPLOY_DIR: /home/ec2-user/weblog_server
           USER: ec2-user
           HOST: ec2-13-231-5-6.ap-northeast-1.compute.amazonaws.com
           PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
