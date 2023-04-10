@@ -10,47 +10,44 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: 18
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Build NestJS app
-      run: npm run build
+      - name: Build NestJS app
+        run: npm run build
 
-    - name: Install SCP and SSH client
-      run: sudo apt-get install -y sshpass
+      - name: Install SCP and SSH client
+        run: sudo apt-get install -y sshpass
 
-    - name: Upload files to EC2
-      env:
-        DEPLOY_DIRS: "/dist .env.production"
-        USER: ec2-user
-        HOST: ec2-13-231-5-6.ap-northeast-1.compute.amazonaws.com
-        PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-      run: |
-        echo "$PRIVATE_KEY" > private_key.pem
-        chmod 600 private_key.pem
-        for DIR in $DEPLOY_DIRS; do
+      - name: Upload files to EC2
+        env:
+          DEPLOY_DIRS: /home/ec2-user/weblog_server
+          USER: ec2-user
+          HOST: ec2-13-231-5-6.ap-northeast-1.compute.amazonaws.com
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
           tar czvf app.tar.gz dist package.json package-lock.json
-          scp -i private_key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r app.tar.gz $USER@$HOST:$DIR
-          ssh -i private_key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $USER@$HOST "cd $DIR && tar xzvf app.tar.gz && rm app.tar.gz"
-        done
-        rm -f private_key.pem
+           echo "$PRIVATE_KEY" > private_key.pem
+           chmod 600 private_key.pem
+           scp -i private_key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r app.tar.gz $USER@$HOST:$DEPLOY_DIR
+           rm -f private_key.pem
 
-    - name: Install dependencies and restart app on EC2
-      env:
-        DEPLOY_DIR: /path/to/your/app/on/ec2
-        USER: ec2-user
-        HOST: ec2-13-231-5-6.ap-northeast-1.compute.amazonaws.com
-        PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-      run: |
-        echo "$PRIVATE_KEY" > private_key.pem
-        chmod 600 private_key.pem
-        ssh -i private_key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $USER@$HOST "cd $DEPLOY_DIR && tar xzvf app.tar.gz && rm app.tar.gz && npm ci && pm2 restart"
-        rm -f private_key.pem
+      - name: Install dependencies and restart app on EC2
+        env:
+          DEPLOY_DIR: /home/ec2-user/weblog_server
+          USER: ec2-user
+          HOST: ec2-13-231-5-6.ap-northeast-1.compute.amazonaws.com
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          echo "$PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          ssh -i private_key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $USER@$HOST "cd $DEPLOY_DIR && tar xzvf app.tar.gz && rm app.tar.gz && npm ci && pm2 restart"
+          rm -f private_key.pem
