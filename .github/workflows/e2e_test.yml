@@ -1,4 +1,4 @@
-name: unit test
+name: e2e
 
 on:
   pull_request:
@@ -20,4 +20,4 @@ jobs:
         run: npm ci
 
       - name: Unit Test
-        run: npm run test
+        run: npm run test:e2e
