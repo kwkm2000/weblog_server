@@ -8,11 +8,45 @@ import { getRepositoryToken } from "@nestjs/typeorm";
 import { ArticleEntity } from "../src/articles/article.entity";
 import { TagEntity } from "../src/tags/tag.entity";
 import { ConfigModule } from "@nestjs/config";
+import { ExecutionContext } from "@nestjs/common";
+import { JwtAuthGuard } from "../src/auth/jwt-auth.guard";
+import { CreateArticleDto, UpdateArticleDto } from "../src/articles/dto";
+
+const mockJwtAuthGuard = (canActivate: boolean) => {
+  return jest.fn().mockImplementation(
+    () =>
+      new (class extends JwtAuthGuard {
+        async canActivate(context: ExecutionContext): Promise<boolean> {
+          return canActivate;
+        }
+      })()
+  );
+};
 
 describe("ArticlesController (e2e)", () => {
   let app: INestApplication;
   let articleRepo: Repository<ArticleEntity>;
   let tagRepo: Repository<TagEntity>;
+  const jwt = "";
+  const testTags = [1, 2, 3];
+  const dto: CreateArticleDto = {
+    title: "Test article",
+    text: JSON.stringify({
+      blocks: [
+        {
+          key: "8o6ur",
+          text: "New Article",
+          type: "unstyled",
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: [],
+          data: {},
+        },
+      ],
+      entityMap: {},
+    }),
+    tagIds: [1, 2, 3],
+  };
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -27,7 +61,10 @@ describe("ArticlesController (e2e)", () => {
           ],
         }),
       ],
-    }).compile();
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue(mockJwtAuthGuard(true))
+      .compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
@@ -38,6 +75,9 @@ describe("ArticlesController (e2e)", () => {
     tagRepo = moduleFixture.get<Repository<TagEntity>>(
       getRepositoryToken(TagEntity)
     );
+    // データベースのクリーンアップ
+    await articleRepo.delete({});
+    await tagRepo.delete({});
   });
 
   afterEach(async () => {
@@ -57,10 +97,84 @@ describe("ArticlesController (e2e)", () => {
       .get("/articles")
       .expect(200);
 
-    // Verify
-    // expect(body).toHaveLength(1);
-    // expect(body[0].id).toEqual(article.id);
-    // expect(body[0].title).toEqual(article.title);
-    // expect(body[0].text).toEqual(JSON.parse(article.text));
+    expect(body).toHaveLength(1);
+    expect(body[0].id).toEqual(article.id);
+    expect(body[0].title).toEqual(article.title);
+    expect(body[0].text).toEqual(JSON.parse(article.text));
+  });
+
+  it("GET /articles/:id", async () => {
+    const newArticle = await request(app.getHttpServer())
+      .post("/articles")
+      .set("Authorization", `Bearer ${jwt}`)
+      .send(dto)
+      .expect(201);
+
+    const res = await request(app.getHttpServer())
+      .get(`/articles/${newArticle.body.id}`)
+      .expect(200);
+
+    expect(res.body).toHaveProperty("title", dto.title);
+    expect(res.body).toHaveProperty("text", JSON.parse(dto.text));
+  });
+
+  it("PUT /articles/:id", async () => {
+    const newArticle = await request(app.getHttpServer())
+      .post("/articles")
+      .set("Authorization", `Bearer ${jwt}`)
+      .send(dto)
+      .expect(201);
+
+    const updateDto: UpdateArticleDto = {
+      title: "updated Title",
+      text: JSON.stringify({
+        blocks: [
+          {
+            key: "8o6ur",
+            text: "updated Article",
+            type: "unstyled",
+            depth: 0,
+            inlineStyleRanges: [],
+            entityRanges: [],
+            data: {},
+          },
+        ],
+        entityMap: {},
+      }),
+      tagIds: [2, 5, 6],
+    };
+
+    await request(app.getHttpServer())
+      .put(`/articles/${newArticle.body.id}`)
+      .set("Authorization", `Bearer ${jwt}`)
+      .send(updateDto)
+      .expect(200);
+
+    const updatedArticle = await request(app.getHttpServer())
+      .get(`/articles/${newArticle.body.id}`)
+      .expect(200);
+
+    expect(updatedArticle.body).toHaveProperty("title", updateDto.title);
+    expect(updatedArticle.body).toHaveProperty(
+      "text",
+      JSON.parse(updateDto.text)
+    );
+  });
+
+  it("DELETE /articles/:id", async () => {
+    const newArticle = await request(app.getHttpServer())
+      .post("/articles")
+      .set("Authorization", `Bearer ${jwt}`)
+      .send(dto)
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .delete(`/articles/${newArticle.body.id}`)
+      .set("Authorization", `Bearer ${jwt}`)
+      .expect(200);
+
+    await request(app.getHttpServer())
+      .get(`/articles/${newArticle.body.id}`)
+      .expect(200);
   });
 });
