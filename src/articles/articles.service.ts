@@ -22,6 +22,13 @@ export class ArticlesService {
     newArticle.text = createArticleDto.text;
     newArticle.createdAt = new Date();
     newArticle.updatedAt = new Date();
+
+    if (!Array.isArray(createArticleDto.tagIds)) {
+      throw new Error(
+        `tagIdsに配列以外の値が渡りました、型は${typeof createArticleDto.tagIds}`
+      );
+    }
+
     newArticle.tags = await Promise.all(
       createArticleDto.tagIds.map(async (id: number): Promise<TagEntity> => {
         return await this.tagRepository.findOneBy({ id });
@@ -64,8 +71,12 @@ export class ArticlesService {
     });
   }
 
-  async findOne(id: number): Promise<Article> {
+  async findOne(id: number): Promise<Article | null> {
     const article = await this.articleRepository.findOneBy({ id });
+
+    if (!article) {
+      return null;
+    }
 
     return { ...article, text: JSON.parse(article.text) };
   }
