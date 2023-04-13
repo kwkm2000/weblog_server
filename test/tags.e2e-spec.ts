@@ -77,21 +77,22 @@ describe("TagsController (e2e)", () => {
   });
 
   it("GET /tags/:id", async () => {
-    const newTag = await request(app.getHttpServer())
-      .post("/tags")
-      .set("Authorization", `Bearer ${jwt}`)
-      .send(dto)
-      .expect(201);
+    // const newTag = await request(app.getHttpServer())
+    //   .post("/tags")
+    //   .set("Authorization", `Bearer ${jwt}`)
+    //   .send(dto)
+    //   .expect(201);
+    const newTag = await tagRepo.save({
+      label: "Test Tag",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
-    console.log("newTag.body", newTag.body);
-
-    // const res = await request(app.getHttpServer())
-    //   .get(`/tags/${newTag.body.id}`)
-    //   .expect(200);
-
-    // console.log("res.body", res.body);
-
-    // expect(res.body).toHaveProperty("label", dto.label);
+    const res = await request(app.getHttpServer())
+      .get(`/tags/${newTag.id}`)
+      .expect(200);
+    console.log("res.body", res.body);
+    expect(res.body).toHaveProperty("label", "Test Tag");
   });
 
   // it("PUT /articles/:id", async () => {
