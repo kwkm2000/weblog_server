@@ -35,6 +35,7 @@ lerna-debug.log*
 
 # DB
 sqlitedb.db
+test-db.sqlite.db
 sqlitedb.db-journal
 
 # env
@@ -42,3 +43,5 @@ sqlitedb.db-journal
 .env.local
 .env.development
 .env.production
+.env.production
+.env.test

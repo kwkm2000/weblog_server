@@ -30,13 +30,13 @@ export class TagsController {
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() createTagDto: CreateTagDto) {
-    this.tagsService.create(createTagDto);
+    return this.tagsService.create(createTagDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Put(":id")
   async update(@Param("id") id: number, @Body() updateTagDto: UpdateTagDto) {
-    this.tagsService.update(id, updateTagDto);
+    return this.tagsService.update(id, updateTagDto);
   }
 
   @UseGuards(JwtAuthGuard)

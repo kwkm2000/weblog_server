@@ -19,7 +19,10 @@ import { ConfigModule } from "@nestjs/config";
     }),
     TypeOrmModule.forRoot({
       type: "sqlite",
-      database: "./db/sqlitedb.db",
+      database:
+        process.env.ENV === "test"
+          ? "./db/test-db.sqlite.db"
+          : "./db/sqlitedb.db",
       entities: [ArticleEntity, TagEntity, UserEntity],
       synchronize: true,
     }),

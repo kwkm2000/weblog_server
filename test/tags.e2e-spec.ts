@@ -2,7 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
-import { Repository } from "typeorm";
+import { Repository, getConnection } from "typeorm";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { TagEntity } from "../src/tags/tag.entity";
 import { ConfigModule } from "@nestjs/config";
@@ -77,11 +77,6 @@ describe("TagsController (e2e)", () => {
   });
 
   it("GET /tags/:id", async () => {
-    // const newTag = await request(app.getHttpServer())
-    //   .post("/tags")
-    //   .set("Authorization", `Bearer ${jwt}`)
-    //   .send(dto)
-    //   .expect(201);
     const newTag = await tagRepo.save({
       label: "Test Tag",
       createdAt: new Date(),
@@ -91,51 +86,33 @@ describe("TagsController (e2e)", () => {
     const res = await request(app.getHttpServer())
       .get(`/tags/${newTag.id}`)
       .expect(200);
-    console.log("res.body", res.body);
     expect(res.body).toHaveProperty("label", "Test Tag");
   });
 
-  // it("PUT /articles/:id", async () => {
-  //   const newArticle = await request(app.getHttpServer())
-  //     .post("/articles")
+  // it("PUT /tags/:id", async () => {
+  //   const newTag = await request(app.getHttpServer())
+  //     .post("/tags")
   //     .set("Authorization", `Bearer ${jwt}`)
   //     .send(dto)
   //     .expect(201);
 
-  //   const updateDto: UpdateArticleDto = {
-  //     title: "updated Title",
-  //     text: JSON.stringify({
-  //       blocks: [
-  //         {
-  //           key: "8o6ur",
-  //           text: "updated Article",
-  //           type: "unstyled",
-  //           depth: 0,
-  //           inlineStyleRanges: [],
-  //           entityRanges: [],
-  //           data: {},
-  //         },
-  //       ],
-  //       entityMap: {},
-  //     }),
-  //     tagIds: [2, 5, 6],
+  //   const updateDto: UpdateTagDto = {
+  //     label: "updated Tag",
   //   };
 
+  //   expect(newTag.body).toHaveProperty("label", "Test Tag");
+
   //   await request(app.getHttpServer())
-  //     .put(`/articles/${newArticle.body.id}`)
+  //     .put(`/tags/${newTag.body.id}`)
   //     .set("Authorization", `Bearer ${jwt}`)
   //     .send(updateDto)
   //     .expect(200);
 
-  //   const updatedArticle = await request(app.getHttpServer())
-  //     .get(`/articles/${newArticle.body.id}`)
+  //   const updatedTag = await request(app.getHttpServer())
+  //     .get(`/tags/${newTag.body.id}`)
   //     .expect(200);
 
-  //   expect(updatedArticle.body).toHaveProperty("title", updateDto.title);
-  //   expect(updatedArticle.body).toHaveProperty(
-  //     "text",
-  //     JSON.parse(updateDto.text)
-  //   );
+  //   expect(updatedTag.body).toHaveProperty("label", updateDto.label);
   // });
 
   // it("DELETE /articles/:id", async () => {
