@@ -1,8 +1,6 @@
 import axios from "axios";
 
 export async function triggerWorkflow() {
-  console.log("process.env", process.env);
-
   const token = process.env.GIT_HUB_TOKEN;
   const owner = process.env.WEB_LOG_CLIENT_REPOSITORY_OWNER;
   const repo = process.env.WEB_LOG_CLIENT_REPOSITORY;

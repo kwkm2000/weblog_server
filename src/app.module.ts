@@ -9,6 +9,7 @@ import { ArticleModule } from "./articles/article.module";
 import { TagModule } from "./tags/tag.module";
 import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
+import { ImagesModule } from "./images/images.module";
 import { ConfigModule } from "@nestjs/config";
 
 @Module({
@@ -30,6 +31,7 @@ import { ConfigModule } from "@nestjs/config";
     TagModule,
     AuthModule,
     UsersModule,
+    ImagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
