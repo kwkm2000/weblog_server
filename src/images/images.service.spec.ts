@@ -7,6 +7,7 @@ import {
   ListObjectsOutput,
 } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from "uuid";
+import { Readable } from "stream";
 
 jest.mock("@aws-sdk/client-s3");
 jest.mock("uuid", () => ({
@@ -50,28 +51,27 @@ describe("ImagesService", () => {
     expect(result).toEqual(expectedUrls);
   });
 
-  //   it("should upload an image and return its URL", async () => {
-  //     const file = {
-  //       originalname: "test.jpg",
-  //       buffer: Buffer.from("test"),
-  //       mimetype: "image/jpeg",
-  //     };
-  //     const uuid = "test-uuid";
-  //     (uuidv4 as jest.Mock).mockReturnValue(uuid);
+  it("uploadImage", async () => {
+    const file: Express.Multer.File = {
+      fieldname: "image",
+      originalname: "test.jpg",
+      encoding: "7bit",
+      mimetype: "image/jpeg",
+      size: Buffer.byteLength("test"),
+      buffer: Buffer.from("test"),
+      stream: new Readable(),
+      destination: "",
+      filename: "test.jpg",
+      path: "",
+    };
+    const uuid = "test-uuid";
+    (uuidv4 as jest.Mock).mockReturnValue(uuid);
 
-  //     jest.spyOn(s3Client, "send").mockResolvedValue({});
+    jest.spyOn(s3Client, "send").mockResolvedValue({} as never);
 
-  //     const result = await imagesService.uploadImage(file);
-  //     const expectedUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${uuid}_${file.originalname}`;
+    const result = await imagesService.uploadImage(file);
+    const expectedUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${uuid}_${file.originalname}`;
 
-  //     expect(result).toEqual(expectedUrl);
-  //     expect(s3Client.send).toHaveBeenCalledWith(
-  //       new PutObjectCommand({
-  //         Bucket: process.env.AWS_S3_BUCKET_NAME,
-  //         Key: `${uuid}_${file.originalname}`,
-  //         Body: file.buffer,
-  //         ContentType: file.mimetype,
-  //       })
-  //     );
-  //   });
+    expect(result).toEqual(expectedUrl);
+  });
 });
