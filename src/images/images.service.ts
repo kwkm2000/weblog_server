@@ -3,6 +3,7 @@ import {
   S3Client,
   PutObjectCommand,
   ListObjectsCommand,
+  DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from "uuid";
 
@@ -56,6 +57,21 @@ export class ImagesService {
       return imageUrl;
     } catch (error) {
       console.error("Error uploading file:", error);
+      throw error;
+    }
+  }
+
+  async deleteImage(key: string): Promise<void> {
+    const params = {
+      Bucket: this.bucketName,
+      Key: key,
+    };
+
+    try {
+      const command = new DeleteObjectCommand(params);
+      await this.s3.send(command);
+    } catch (error) {
+      console.error("Error deleting file:", error);
       throw error;
     }
   }
