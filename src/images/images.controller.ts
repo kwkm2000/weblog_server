@@ -16,24 +16,13 @@ export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
   @Get()
-  hoge(): string {
-    return "hoge";
+  async getAllImageUrls(): Promise<string[]> {
+    return await this.imagesService.getAllImageUrls();
   }
 
   @Post()
   @UseInterceptors(FileInterceptor("image"))
-  async upload(
-    @UploadedFile() file: Express.Multer.File,
-    @Req() req: Request,
-    @Res() res: Response
-  ) {
-    try {
-      const imageUrl = await this.imagesService.uploadImage(file);
-      return res.status(200).json({ imageUrl });
-    } catch (error) {
-      console.error("Error uploading file:", error);
-
-      return res.status(500).json({ message: "Error uploading file." });
-    }
+  async upload(@UploadedFile() file: Express.Multer.File) {
+    return await this.imagesService.uploadImage(file);
   }
 }
