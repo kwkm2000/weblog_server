@@ -19,7 +19,7 @@ export class ArticlesService {
   async create(createArticleDto: CreateArticleDto): Promise<Article> {
     const newArticle: ArticleEntity = new ArticleEntity();
     newArticle.title = createArticleDto.title;
-    newArticle.text = createArticleDto.text;
+    newArticle.text = JSON.stringify(createArticleDto.text);
     newArticle.createdAt = new Date();
     newArticle.updatedAt = new Date();
 
