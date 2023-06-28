@@ -45,22 +45,34 @@ describe("ArticlesService", () => {
 
   describe("create", () => {
     it("記事の作成", async () => {
-      const createArticleDto = {
+      const createArticleDto: CreateArticleDto = {
         title: "Test article",
-        text: JSON.stringify({
-          blocks: [
-            {
-              key: "8o6ur",
-              text: "New Article",
-              type: "unstyled",
-              depth: 0,
-              inlineStyleRanges: [],
-              entityRanges: [],
-              data: {},
-            },
-          ],
-          entityMap: {},
-        }),
+        text: [
+          {
+            type: "paragraph",
+            children: [
+              {
+                text: "あいうえお",
+              },
+            ],
+          },
+          {
+            type: "paragraph",
+            children: [
+              {
+                text: "",
+              },
+            ],
+          },
+          {
+            type: "paragraph",
+            children: [
+              {
+                text: "こんにちは",
+              },
+            ],
+          },
+        ],
         tagIds: [1, 2, 3],
       };
 
@@ -83,7 +95,7 @@ describe("ArticlesService", () => {
       const articleEntity = new ArticleEntity();
       articleEntity.id = 1;
       articleEntity.title = createArticleDto.title;
-      articleEntity.text = createArticleDto.text;
+      articleEntity.text = JSON.stringify(createArticleDto.text);
       articleEntity.createdAt = new Date();
       articleEntity.updatedAt = new Date();
       articleEntity.tags = [tagEntity1, tagEntity2, tagEntity3];
