@@ -127,11 +127,37 @@ describe("ArticlesController", () => {
   describe("create", () => {
     it("should create and return an article", async () => {
       const articleDto: CreateArticleDto = {
-        title: "Test",
-        text: "Test article",
+        title: "Test article",
+        text: [
+          {
+            type: "paragraph",
+            children: [
+              {
+                text: "あいうえお",
+              },
+            ],
+          },
+          {
+            type: "paragraph",
+            children: [
+              {
+                text: "",
+              },
+            ],
+          },
+          {
+            type: "paragraph",
+            children: [
+              {
+                text: "こんにちは",
+              },
+            ],
+          },
+        ],
         tagIds: [1, 2, 3],
       };
       const result: Article = articleMock;
+      console.log("result", result);
 
       jest
         .spyOn(articlesService, "create")
