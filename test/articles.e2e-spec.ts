@@ -29,20 +29,32 @@ describe("ArticlesController (e2e)", () => {
   const testTags = [1, 2, 3];
   const dto: CreateArticleDto = {
     title: "Test article",
-    text: JSON.stringify({
-      blocks: [
-        {
-          key: "8o6ur",
-          text: "New Article",
-          type: "unstyled",
-          depth: 0,
-          inlineStyleRanges: [],
-          entityRanges: [],
-          data: {},
-        },
-      ],
-      entityMap: {},
-    }),
+    text: [
+      {
+        type: "paragraph",
+        children: [
+          {
+            text: "あいうえお",
+          },
+        ],
+      },
+      {
+        type: "paragraph",
+        children: [
+          {
+            text: "",
+          },
+        ],
+      },
+      {
+        type: "paragraph",
+        children: [
+          {
+            text: "こんにちは",
+          },
+        ],
+      },
+    ],
     tagIds: [1, 2, 3],
   };
 
@@ -111,9 +123,10 @@ describe("ArticlesController (e2e)", () => {
     const res = await request(app.getHttpServer())
       .get(`/articles/${newArticle.body.id}`)
       .expect(200);
+    console.log(res.body);
 
     expect(res.body).toHaveProperty("title", dto.title);
-    expect(res.body).toHaveProperty("text", JSON.parse(dto.text));
+    expect(res.body).toHaveProperty("text", dto.text);
   });
 
   it("PUT /articles/:id", async () => {
