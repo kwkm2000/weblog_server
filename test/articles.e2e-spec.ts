@@ -98,6 +98,7 @@ describe("ArticlesController (e2e)", () => {
   it("GET /articles", async () => {
     const article = await articleRepo.save({
       title: "Test Article",
+      headerImage: "",
       text: JSON.stringify("Test content"),
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -112,6 +113,7 @@ describe("ArticlesController (e2e)", () => {
     expect(body[0].id).toEqual(article.id);
     expect(body[0].title).toEqual(article.title);
     expect(body[0].text).toEqual(JSON.parse(article.text));
+    expect(body[0].headerImage).toEqual(article.headerImage);
   });
 
   it("GET /articles/:id", async () => {
@@ -124,7 +126,6 @@ describe("ArticlesController (e2e)", () => {
     const res = await request(app.getHttpServer())
       .get(`/articles/${newArticle.body.id}`)
       .expect(200);
-    console.log(res.body);
 
     expect(res.body).toHaveProperty("title", dto.title);
     expect(res.body).toHaveProperty("text", dto.text);
