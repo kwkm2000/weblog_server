@@ -18,6 +18,7 @@ describe("ArticlesController", () => {
   const articleMock: Article = {
     id: 1,
     title: "Test",
+    headerImage: "",
     text: {
       blocks: [
         {
@@ -39,6 +40,7 @@ describe("ArticlesController", () => {
   const articleMock2: Article = {
     id: 2,
     title: "hoge",
+    headerImage: "",
     text: {
       blocks: [
         {
@@ -60,6 +62,7 @@ describe("ArticlesController", () => {
   const articleMock3: Article = {
     id: 3,
     title: "fuga",
+    headerImage: "",
     text: {
       blocks: [
         {
@@ -128,6 +131,7 @@ describe("ArticlesController", () => {
     it("should create and return an article", async () => {
       const articleDto: CreateArticleDto = {
         title: "Test article",
+        headerImage: "",
         text: [
           {
             type: "paragraph",
@@ -157,7 +161,6 @@ describe("ArticlesController", () => {
         tagIds: [1, 2, 3],
       };
       const result: Article = articleMock;
-      console.log("result", result);
 
       jest
         .spyOn(articlesService, "create")

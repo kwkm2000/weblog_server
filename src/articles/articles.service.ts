@@ -20,6 +20,7 @@ export class ArticlesService {
     const newArticle: ArticleEntity = new ArticleEntity();
     newArticle.title = createArticleDto.title;
     newArticle.text = JSON.stringify(createArticleDto.text);
+    newArticle.headerImage = createArticleDto.headerImage;
     newArticle.createdAt = new Date();
     newArticle.updatedAt = new Date();
 

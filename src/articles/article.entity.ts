@@ -16,6 +16,9 @@ export class ArticleEntity {
   title: string;
 
   @Column()
+  headerImage: string;
+
+  @Column()
   text: string;
 
   @Column()

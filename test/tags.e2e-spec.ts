@@ -86,6 +86,7 @@ describe("TagsController (e2e)", () => {
     const res = await request(app.getHttpServer())
       .get(`/tags/${newTag.id}`)
       .expect(200);
+
     expect(res.body).toHaveProperty("label", "Test Tag");
   });
 
