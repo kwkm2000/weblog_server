@@ -47,6 +47,7 @@ describe("ArticlesService", () => {
     it("記事の作成", async () => {
       const createArticleDto: CreateArticleDto = {
         title: "Test article",
+        headerImage: "",
         text: [
           {
             type: "paragraph",
@@ -148,6 +149,7 @@ describe("ArticlesService", () => {
       const articleEntity: ArticleEntity = {
         id: id,
         title: "test title",
+        headerImage: "",
         text: JSON.stringify({
           blocks: [
             {

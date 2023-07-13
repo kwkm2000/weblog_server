@@ -29,6 +29,7 @@ describe("ArticlesController (e2e)", () => {
   const testTags = [1, 2, 3];
   const dto: CreateArticleDto = {
     title: "Test article",
+    headerImage: "",
     text: [
       {
         type: "paragraph",

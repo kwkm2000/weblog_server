@@ -7,5 +7,6 @@ export interface Article {
   text: RawDraftContentState;
   createdAt: Date;
   updatedAt: Date;
+  headerImage: string;
   tags: Tag[];
 }
