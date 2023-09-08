@@ -1,10 +1,4 @@
-import {
-  createEditor,
-  Descendant,
-  Transforms,
-  Editor,
-  Element as SlateElement,
-} from "slate";
+import { Descendant } from "slate";
 
 export default class CreateArticleDto {
   readonly title: string;
