@@ -50,7 +50,7 @@ export class ArticlesService {
   ): Promise<Article> {
     const updateArticle = await this.articleRepository.findOneBy({ id });
     updateArticle.title = updateArticleDto.title;
-    updateArticle.text = updateArticleDto.text;
+    updateArticle.text = JSON.stringify(updateArticleDto.text);
     updateArticle.updatedAt = new Date();
     const articleEntity = await this.articleRepository.save(updateArticle);
 
