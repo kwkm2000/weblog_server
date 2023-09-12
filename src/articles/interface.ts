@@ -28,6 +28,6 @@ export const UpdateValueSchema = z.object({
   value: CreateValueSchema,
 });
 
-export type Article = z.infer<typeof ArticleSchema>;
+export type Article = Required<z.infer<typeof ArticleSchema>>;
 export type CreateValue = z.infer<typeof CreateValueSchema>;
 export type UpdateValue = z.infer<typeof UpdateValueSchema>;
