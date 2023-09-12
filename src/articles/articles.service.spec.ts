@@ -4,6 +4,7 @@ import { getRepositoryToken } from "@nestjs/typeorm";
 import { CreateArticleDto, UpdateArticleDto } from "./dto";
 import { ArticleEntity } from "./article.entity";
 import { TagEntity } from "../tags/tag.entity";
+import { articles as mockArticles } from "../../test/mocks/articles";
 
 describe("ArticlesService", () => {
   let service: ArticlesService;
@@ -125,20 +126,32 @@ describe("ArticlesService", () => {
       const id = 1;
       const updateArticleDto: UpdateArticleDto = {
         title: "updated title",
-        text: JSON.stringify({
-          blocks: [
-            {
-              key: "8o6ur",
-              text: "Updated Article",
-              type: "unstyled",
-              depth: 0,
-              inlineStyleRanges: [],
-              entityRanges: [],
-              data: {},
-            },
-          ],
-          entityMap: {},
-        }),
+        text: [
+          {
+            type: "paragraph",
+            children: [
+              {
+                text: "あいうえお",
+              },
+            ],
+          },
+          {
+            type: "paragraph",
+            children: [
+              {
+                text: "",
+              },
+            ],
+          },
+          {
+            type: "paragraph",
+            children: [
+              {
+                text: "こんにちは",
+              },
+            ],
+          },
+        ],
         tagIds: [1, 2],
       };
 
@@ -150,20 +163,7 @@ describe("ArticlesService", () => {
         id: id,
         title: "test title",
         headerImage: "",
-        text: JSON.stringify({
-          blocks: [
-            {
-              key: "8o6ur",
-              text: "New Article",
-              type: "unstyled",
-              depth: 0,
-              inlineStyleRanges: [],
-              entityRanges: [],
-              data: {},
-            },
-          ],
-          entityMap: {},
-        }),
+        text: JSON.stringify(mockArticles[0].text),
         createdAt: new Date("2022-01-01T00:00:00.000Z"),
         updatedAt: new Date("2022-01-01T00:00:00.000Z"),
         tags: [tagEntity1],
@@ -186,7 +186,7 @@ describe("ArticlesService", () => {
         ...articleEntity,
         ...updateArticleDto,
         updatedAt: expect.any(Date),
-        text: JSON.parse(articleEntity.text),
+        text: updateArticleDto.text,
       });
     });
   });
@@ -197,68 +197,7 @@ describe("ArticlesService", () => {
         const now = new Date();
         return new Date(now.setDate(now.getDate() + addNumber));
       };
-      const mockArticles = [
-        {
-          id: 1,
-          title: "Test Article 1",
-          text: JSON.stringify({
-            blocks: [
-              {
-                key: "8o6ur",
-                text: "New Article1",
-                type: "unstyled",
-                depth: 0,
-                inlineStyleRanges: [],
-                entityRanges: [],
-                data: {},
-              },
-            ],
-            entityMap: {},
-          }),
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          id: 2,
-          title: "Test Article 2",
-          text: JSON.stringify({
-            blocks: [
-              {
-                key: "8o6ur",
-                text: "New Article2",
-                type: "unstyled",
-                depth: 0,
-                inlineStyleRanges: [],
-                entityRanges: [],
-                data: {},
-              },
-            ],
-            entityMap: {},
-          }),
-          createdAt: addDay(-40),
-          updatedAt: new Date(),
-        },
-        {
-          id: 3,
-          title: "Test Article 3",
-          text: JSON.stringify({
-            blocks: [
-              {
-                key: "8o6ur",
-                text: "New Article2",
-                type: "unstyled",
-                depth: 0,
-                inlineStyleRanges: [],
-                entityRanges: [],
-                data: {},
-              },
-            ],
-            entityMap: {},
-          }),
-          createdAt: addDay(-3),
-          updatedAt: new Date(),
-        },
-      ];
+
       articleRepositoryMock.find.mockResolvedValueOnce(mockArticles);
 
       const result = await service.findAll();
@@ -269,7 +208,7 @@ describe("ArticlesService", () => {
 
       expect(result).toEqual(
         sortedArticles.map((mockArticle) => {
-          return { ...mockArticle, text: JSON.parse(mockArticle.text) };
+          return { ...mockArticle, text: mockArticle.text };
         })
       );
     });
@@ -277,68 +216,28 @@ describe("ArticlesService", () => {
 
   describe("findOne", () => {
     it("IDに紐づく記事を取得", async () => {
-      const mockArticle = {
-        id: 1,
-        title: "Test Article 1",
-        text: JSON.stringify({
-          blocks: [
-            {
-              key: "8o6ur",
-              text: "New Article1",
-              type: "unstyled",
-              depth: 0,
-              inlineStyleRanges: [],
-              entityRanges: [],
-              data: {},
-            },
-          ],
-          entityMap: {},
-        }),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      articleRepositoryMock.findOneBy.mockResolvedValueOnce(mockArticle);
+      const article = mockArticles[0];
+
+      articleRepositoryMock.findOneBy.mockResolvedValueOnce(article);
 
       const result = await service.findOne(1);
 
-      expect(result).toEqual({
-        ...mockArticle,
-        text: JSON.parse(mockArticle.text),
-      });
+      expect(result).toEqual(article);
     });
   });
 
   describe("remove", () => {
     it("記事の削除", async () => {
-      const mockArticle = {
-        id: 1,
-        title: "Test Article 1",
-        text: JSON.stringify({
-          blocks: [
-            {
-              key: "8o6ur",
-              text: "New Article1",
-              type: "unstyled",
-              depth: 0,
-              inlineStyleRanges: [],
-              entityRanges: [],
-              data: {},
-            },
-          ],
-          entityMap: {},
-        }),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+      const article = mockArticles[0];
 
-      articleRepositoryMock.remove.mockResolvedValueOnce(mockArticle);
-      articleRepositoryMock.findOneBy.mockResolvedValueOnce(mockArticle);
-      await service.remove(mockArticle.id);
+      articleRepositoryMock.remove.mockResolvedValueOnce(article);
+      articleRepositoryMock.findOneBy.mockResolvedValueOnce(article);
+      await service.remove(article.id);
 
       expect(articleRepositoryMock.findOneBy).toHaveBeenCalledWith({
-        id: mockArticle.id,
+        id: article.id,
       });
-      expect(articleRepositoryMock.remove).toHaveBeenCalledWith(mockArticle);
+      expect(articleRepositoryMock.remove).toHaveBeenCalledWith(article);
     });
   });
 });
