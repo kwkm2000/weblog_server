@@ -7,80 +7,11 @@ import { CreateArticleDto, UpdateArticleDto } from "./dto";
 import { Article } from "./interface";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { articles as articlesMock } from "../../test/mocks/articles";
 
 describe("ArticlesController", () => {
   let articlesController: ArticlesController;
   let articlesService: ArticlesService;
-  const addDay = (addNumber: number): Date => {
-    const now = new Date();
-    return new Date(now.setDate(now.getDate() + addNumber));
-  };
-  const articleMock: Article = {
-    id: 1,
-    title: "Test",
-    headerImage: "",
-    text: {
-      blocks: [
-        {
-          key: "8o6ur",
-          text: "New Article",
-          type: "unstyled",
-          depth: 0,
-          inlineStyleRanges: [],
-          entityRanges: [],
-          data: {},
-        },
-      ],
-      entityMap: {},
-    },
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    tags: [],
-  };
-  const articleMock2: Article = {
-    id: 2,
-    title: "hoge",
-    headerImage: "",
-    text: {
-      blocks: [
-        {
-          key: "8o6ur",
-          text: "New Article",
-          type: "unstyled",
-          depth: 0,
-          inlineStyleRanges: [],
-          entityRanges: [],
-          data: {},
-        },
-      ],
-      entityMap: {},
-    },
-    createdAt: addDay(-40),
-    updatedAt: new Date(),
-    tags: [],
-  };
-  const articleMock3: Article = {
-    id: 3,
-    title: "fuga",
-    headerImage: "",
-    text: {
-      blocks: [
-        {
-          key: "8o6ur",
-          text: "New Article",
-          type: "unstyled",
-          depth: 0,
-          inlineStyleRanges: [],
-          entityRanges: [],
-          data: {},
-        },
-      ],
-      entityMap: {},
-    },
-    createdAt: addDay(-3),
-    updatedAt: new Date(),
-    tags: [],
-  };
 
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
@@ -105,7 +36,7 @@ describe("ArticlesController", () => {
 
   describe("findAll", () => {
     it("記事を作成日が新しい順に全件取得", async () => {
-      const result: Article[] = [articleMock, articleMock3, articleMock2];
+      const result: Article[] = articlesMock;
 
       jest
         .spyOn(articlesService, "findAll")
@@ -116,8 +47,8 @@ describe("ArticlesController", () => {
   });
 
   describe("findOne", () => {
-    it("should return an article by id", async () => {
-      const result: Article = articleMock;
+    it("IDに紐づく記事が返却されること", async () => {
+      const result: Article = articlesMock[0];
 
       jest
         .spyOn(articlesService, "findOne")
@@ -128,7 +59,7 @@ describe("ArticlesController", () => {
   });
 
   describe("create", () => {
-    it("should create and return an article", async () => {
+    it("記事が作成できること、作成した記事が返却されること", async () => {
       const articleDto: CreateArticleDto = {
         title: "Test article",
         headerImage: "",
@@ -160,7 +91,40 @@ describe("ArticlesController", () => {
         ],
         tagIds: [1, 2, 3],
       };
-      const result: Article = articleMock;
+      const result: Article = {
+        id: 1,
+        title: "Test article",
+        headerImage: "",
+        text: [
+          {
+            type: "paragraph",
+            children: [
+              {
+                text: "あいうえお",
+              },
+            ],
+          },
+          {
+            type: "paragraph",
+            children: [
+              {
+                text: "",
+              },
+            ],
+          },
+          {
+            type: "paragraph",
+            children: [
+              {
+                text: "こんにちは",
+              },
+            ],
+          },
+        ],
+        createdAt: new Date("2023-08-06T07:29:52.580Z"),
+        updatedAt: new Date("2023-08-06T07:29:52.580Z"),
+        tags: [],
+      };
 
       jest
         .spyOn(articlesService, "create")
@@ -174,26 +138,13 @@ describe("ArticlesController", () => {
     it("should update and return an article", async () => {
       const articleDto: UpdateArticleDto = {
         title: "Test",
-        text: JSON.stringify({
-          blocks: [
-            {
-              key: "8o6ur",
-              text: "Update Article",
-              type: "unstyled",
-              depth: 0,
-              inlineStyleRanges: [],
-              entityRanges: [],
-              data: {},
-            },
-          ],
-          entityMap: {},
-        }),
+        text: articlesMock[0].text,
         tagIds: [1],
       };
       const result: Article = {
-        ...articleMock,
+        ...articlesMock[0],
         title: articleDto.title,
-        text: JSON.parse(articleDto.text),
+        text: articleDto.text,
       };
 
       jest

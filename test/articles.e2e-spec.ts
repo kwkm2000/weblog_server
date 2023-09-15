@@ -140,20 +140,25 @@ describe("ArticlesController (e2e)", () => {
 
     const updateDto: UpdateArticleDto = {
       title: "updated Title",
-      text: JSON.stringify({
-        blocks: [
-          {
-            key: "8o6ur",
-            text: "updated Article",
-            type: "unstyled",
-            depth: 0,
-            inlineStyleRanges: [],
-            entityRanges: [],
-            data: {},
-          },
-        ],
-        entityMap: {},
-      }),
+      text: [
+        {
+          type: "paragraph",
+          children: [
+            {
+              text: "A line of text in a paragraph.",
+            },
+          ],
+        },
+        {
+          type: "image",
+          url: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/A_cat_on_a_motorcycle_in_the_medina_of_Tunis_20171017_131525.jpg/1200px-A_cat_on_a_motorcycle_in_the_medina_of_Tunis_20171017_131525.jpg",
+          children: [
+            {
+              text: "",
+            },
+          ],
+        },
+      ],
       tagIds: [2, 5, 6],
     };
 
@@ -168,10 +173,7 @@ describe("ArticlesController (e2e)", () => {
       .expect(200);
 
     expect(updatedArticle.body).toHaveProperty("title", updateDto.title);
-    expect(updatedArticle.body).toHaveProperty(
-      "text",
-      JSON.parse(updateDto.text)
-    );
+    expect(updatedArticle.body).toHaveProperty("text", updateDto.text);
   });
 
   it("DELETE /articles/:id", async () => {

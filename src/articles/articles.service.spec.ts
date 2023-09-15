@@ -4,6 +4,10 @@ import { getRepositoryToken } from "@nestjs/typeorm";
 import { CreateArticleDto, UpdateArticleDto } from "./dto";
 import { ArticleEntity } from "./article.entity";
 import { TagEntity } from "../tags/tag.entity";
+import {
+  articles as mockArticles,
+  articleEntities as mockArticleEntities,
+} from "../../test/mocks/articles";
 
 describe("ArticlesService", () => {
   let service: ArticlesService;
@@ -50,10 +54,11 @@ describe("ArticlesService", () => {
         headerImage: "",
         text: [
           {
-            type: "paragraph",
+            type: "image",
+            url: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/A_cat_on_a_motorcycle_in_the_medina_of_Tunis_20171017_131525.jpg/1200px-A_cat_on_a_motorcycle_in_the_medina_of_Tunis_20171017_131525.jpg",
             children: [
               {
-                text: "あいうえお",
+                text: "",
               },
             ],
           },
@@ -61,7 +66,7 @@ describe("ArticlesService", () => {
             type: "paragraph",
             children: [
               {
-                text: "",
+                text: "あいうえお",
               },
             ],
           },
@@ -125,20 +130,24 @@ describe("ArticlesService", () => {
       const id = 1;
       const updateArticleDto: UpdateArticleDto = {
         title: "updated title",
-        text: JSON.stringify({
-          blocks: [
-            {
-              key: "8o6ur",
-              text: "Updated Article",
-              type: "unstyled",
-              depth: 0,
-              inlineStyleRanges: [],
-              entityRanges: [],
-              data: {},
-            },
-          ],
-          entityMap: {},
-        }),
+        text: [
+          {
+            type: "paragraph",
+            children: [
+              {
+                text: "あいうえお",
+              },
+            ],
+          },
+          {
+            type: "paragraph",
+            children: [
+              {
+                text: "",
+              },
+            ],
+          },
+        ],
         tagIds: [1, 2],
       };
 
@@ -146,34 +155,16 @@ describe("ArticlesService", () => {
       tagEntity1.id = 1;
       tagEntity1.label = "Tag 1";
 
-      const articleEntity: ArticleEntity = {
-        id: id,
-        title: "test title",
-        headerImage: "",
-        text: JSON.stringify({
-          blocks: [
-            {
-              key: "8o6ur",
-              text: "New Article",
-              type: "unstyled",
-              depth: 0,
-              inlineStyleRanges: [],
-              entityRanges: [],
-              data: {},
-            },
-          ],
-          entityMap: {},
-        }),
-        createdAt: new Date("2022-01-01T00:00:00.000Z"),
-        updatedAt: new Date("2022-01-01T00:00:00.000Z"),
-        tags: [tagEntity1],
-      };
-
-      articleRepositoryMock.findOneBy.mockResolvedValueOnce(articleEntity);
+      articleRepositoryMock.findOneBy.mockResolvedValueOnce(
+        mockArticleEntities[0]
+      );
       articleRepositoryMock.save.mockImplementationOnce(
         jest.fn((article: ArticleEntity) => ({
-          ...article,
-          ...updateArticleDto,
+          ...mockArticleEntities[0],
+          ...{
+            ...updateArticleDto,
+            text: JSON.stringify(updateArticleDto.text),
+          },
           updatedAt: new Date(),
         }))
       );
@@ -183,10 +174,9 @@ describe("ArticlesService", () => {
       expect(articleRepositoryMock.findOneBy).toHaveBeenCalledWith({ id: id });
 
       expect(result).toEqual({
-        ...articleEntity,
+        ...mockArticleEntities[0],
         ...updateArticleDto,
         updatedAt: expect.any(Date),
-        text: JSON.parse(articleEntity.text),
       });
     });
   });
@@ -197,69 +187,10 @@ describe("ArticlesService", () => {
         const now = new Date();
         return new Date(now.setDate(now.getDate() + addNumber));
       };
-      const mockArticles = [
-        {
-          id: 1,
-          title: "Test Article 1",
-          text: JSON.stringify({
-            blocks: [
-              {
-                key: "8o6ur",
-                text: "New Article1",
-                type: "unstyled",
-                depth: 0,
-                inlineStyleRanges: [],
-                entityRanges: [],
-                data: {},
-              },
-            ],
-            entityMap: {},
-          }),
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          id: 2,
-          title: "Test Article 2",
-          text: JSON.stringify({
-            blocks: [
-              {
-                key: "8o6ur",
-                text: "New Article2",
-                type: "unstyled",
-                depth: 0,
-                inlineStyleRanges: [],
-                entityRanges: [],
-                data: {},
-              },
-            ],
-            entityMap: {},
-          }),
-          createdAt: addDay(-40),
-          updatedAt: new Date(),
-        },
-        {
-          id: 3,
-          title: "Test Article 3",
-          text: JSON.stringify({
-            blocks: [
-              {
-                key: "8o6ur",
-                text: "New Article2",
-                type: "unstyled",
-                depth: 0,
-                inlineStyleRanges: [],
-                entityRanges: [],
-                data: {},
-              },
-            ],
-            entityMap: {},
-          }),
-          createdAt: addDay(-3),
-          updatedAt: new Date(),
-        },
-      ];
-      articleRepositoryMock.find.mockResolvedValueOnce(mockArticles);
+      const mockArticleEntities = mockArticles.map((article) => {
+        return { ...article, text: JSON.stringify(article.text) };
+      });
+      articleRepositoryMock.find.mockResolvedValueOnce(mockArticleEntities);
 
       const result = await service.findAll();
 
@@ -269,7 +200,7 @@ describe("ArticlesService", () => {
 
       expect(result).toEqual(
         sortedArticles.map((mockArticle) => {
-          return { ...mockArticle, text: JSON.parse(mockArticle.text) };
+          return { ...mockArticle, text: mockArticle.text };
         })
       );
     });
@@ -277,68 +208,28 @@ describe("ArticlesService", () => {
 
   describe("findOne", () => {
     it("IDに紐づく記事を取得", async () => {
-      const mockArticle = {
-        id: 1,
-        title: "Test Article 1",
-        text: JSON.stringify({
-          blocks: [
-            {
-              key: "8o6ur",
-              text: "New Article1",
-              type: "unstyled",
-              depth: 0,
-              inlineStyleRanges: [],
-              entityRanges: [],
-              data: {},
-            },
-          ],
-          entityMap: {},
-        }),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      articleRepositoryMock.findOneBy.mockResolvedValueOnce(mockArticle);
+      const article = mockArticleEntities[0];
+
+      articleRepositoryMock.findOneBy.mockResolvedValueOnce(article);
 
       const result = await service.findOne(1);
 
-      expect(result).toEqual({
-        ...mockArticle,
-        text: JSON.parse(mockArticle.text),
-      });
+      expect(result).toEqual({ ...article, text: JSON.parse(article.text) });
     });
   });
 
   describe("remove", () => {
     it("記事の削除", async () => {
-      const mockArticle = {
-        id: 1,
-        title: "Test Article 1",
-        text: JSON.stringify({
-          blocks: [
-            {
-              key: "8o6ur",
-              text: "New Article1",
-              type: "unstyled",
-              depth: 0,
-              inlineStyleRanges: [],
-              entityRanges: [],
-              data: {},
-            },
-          ],
-          entityMap: {},
-        }),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+      const article = mockArticles[0];
 
-      articleRepositoryMock.remove.mockResolvedValueOnce(mockArticle);
-      articleRepositoryMock.findOneBy.mockResolvedValueOnce(mockArticle);
-      await service.remove(mockArticle.id);
+      articleRepositoryMock.remove.mockResolvedValueOnce(article);
+      articleRepositoryMock.findOneBy.mockResolvedValueOnce(article);
+      await service.remove(article.id);
 
       expect(articleRepositoryMock.findOneBy).toHaveBeenCalledWith({
-        id: mockArticle.id,
+        id: article.id,
       });
-      expect(articleRepositoryMock.remove).toHaveBeenCalledWith(mockArticle);
+      expect(articleRepositoryMock.remove).toHaveBeenCalledWith(article);
     });
   });
 });
