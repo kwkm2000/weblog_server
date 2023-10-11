@@ -27,6 +27,9 @@ export class ArticleEntity {
   @Column()
   updatedAt: Date;
 
+  @Column({ default: false })
+  draft: boolean;
+
   @ManyToMany((type) => TagEntity, (tag) => tag.articles, { cascade: true })
   @JoinTable()
   tags: TagEntity[];

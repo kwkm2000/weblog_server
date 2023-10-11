@@ -13,12 +13,14 @@ export const ArticleSchema = z.object({
   updatedAt: z.date(),
   tags: z.array(TagsSchema),
   headerImage: z.string(),
+  draft: z.boolean(),
 });
 
 export const CreateValueSchema = ArticleSchema.pick({
   title: true,
   text: true,
   headerImage: true,
+  draft: true,
 }).extend({
   tagIds: z.array(z.number()),
 });

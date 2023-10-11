@@ -19,6 +19,7 @@ export const articles: Article[] = [
     createdAt: new Date("2023-08-06T07:29:52.580Z"),
     updatedAt: new Date("2023-08-06T07:29:52.580Z"),
     tags: [],
+    draft: false,
   },
   {
     id: 2,
@@ -47,6 +48,7 @@ export const articles: Article[] = [
     createdAt: new Date("2023-07-13T10:54:38.728Z"),
     updatedAt: new Date("2023-07-13T10:54:38.728Z"),
     tags: [],
+    draft: false,
   },
 ];
 
@@ -68,6 +70,7 @@ export const articleEntities: ArticleEntity[] = [
     createdAt: new Date("2023-08-06T07:29:52.580Z"),
     updatedAt: new Date("2023-08-06T07:29:52.580Z"),
     tags: [],
+    draft: false,
   },
   {
     id: 2,
@@ -96,5 +99,6 @@ export const articleEntities: ArticleEntity[] = [
     createdAt: new Date("2023-07-13T10:54:38.728Z"),
     updatedAt: new Date("2023-07-13T10:54:38.728Z"),
     tags: [],
+    draft: false,
   },
 ];

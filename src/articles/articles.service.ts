@@ -23,6 +23,7 @@ export class ArticlesService {
     newArticle.headerImage = createArticleDto.headerImage;
     newArticle.createdAt = new Date();
     newArticle.updatedAt = new Date();
+    newArticle.draft = false;
 
     if (!Array.isArray(createArticleDto.tagIds)) {
       throw new Error(
@@ -35,6 +36,7 @@ export class ArticlesService {
         return await this.tagRepository.findOneBy({ id });
       })
     );
+
     const articleEntity = await this.articleRepository.save(newArticle);
 
     if (process.env.ENV === "production") {

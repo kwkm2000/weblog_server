@@ -124,6 +124,7 @@ describe("ArticlesController", () => {
         createdAt: new Date("2023-08-06T07:29:52.580Z"),
         updatedAt: new Date("2023-08-06T07:29:52.580Z"),
         tags: [],
+        draft: false,
       };
 
       jest
