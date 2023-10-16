@@ -97,12 +97,23 @@ describe("ArticlesController (e2e)", () => {
 
   it("GET /articles", async () => {
     const article = await articleRepo.save({
-      title: "Test Article",
+      title: "下書きではない記事です",
       headerImage: "",
       text: JSON.stringify("Test content"),
       createdAt: new Date(),
       updatedAt: new Date(),
       tags: [],
+      draft: false,
+    });
+    // draft: trueの記事は取得されない
+    await articleRepo.save({
+      title: "下書きの記事です",
+      headerImage: "",
+      text: JSON.stringify("Test content"),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      tags: [],
+      draft: true,
     });
 
     const { body } = await request(app.getHttpServer())
@@ -114,6 +125,38 @@ describe("ArticlesController (e2e)", () => {
     expect(body[0].title).toEqual(article.title);
     expect(body[0].text).toEqual(JSON.parse(article.text));
     expect(body[0].headerImage).toEqual(article.headerImage);
+  });
+
+  it("GET /articles/draft", async () => {
+    // draft: trueの記事のみ取得される
+    const draftArticle = await articleRepo.save({
+      title: "下書きの記事です",
+      headerImage: "",
+      text: JSON.stringify("Test content"),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      tags: [],
+      draft: true,
+    });
+    await articleRepo.save({
+      title: "下書きではない記事です",
+      headerImage: "",
+      text: JSON.stringify("Test content"),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      tags: [],
+      draft: false,
+    });
+
+    const { body } = await request(app.getHttpServer())
+      .get("/articles/draft")
+      .expect(200);
+
+    expect(body).toHaveLength(1);
+    expect(body[0].id).toEqual(draftArticle.id);
+    expect(body[0].title).toEqual(draftArticle.title);
+    expect(body[0].text).toEqual(JSON.parse(draftArticle.text));
+    expect(body[0].headerImage).toEqual(draftArticle.headerImage);
   });
 
   it("GET /articles/:id", async () => {

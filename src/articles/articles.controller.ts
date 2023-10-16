@@ -18,8 +18,13 @@ export class ArticlesController {
   constructor(private readonly articlesService: ArticlesService) {}
 
   @Get()
-  async findAll(): Promise<Article[]> {
-    return this.articlesService.findAll();
+  async find(): Promise<Article[]> {
+    return this.articlesService.find();
+  }
+
+  @Get("/draft")
+  async findDraft(): Promise<Article[]> {
+    return this.articlesService.findDraft();
   }
 
   @Get(":id")

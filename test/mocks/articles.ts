@@ -48,7 +48,7 @@ export const articles: Article[] = [
     createdAt: new Date("2023-07-13T10:54:38.728Z"),
     updatedAt: new Date("2023-07-13T10:54:38.728Z"),
     tags: [],
-    draft: false,
+    draft: true,
   },
 ];
 
@@ -99,6 +99,6 @@ export const articleEntities: ArticleEntity[] = [
     createdAt: new Date("2023-07-13T10:54:38.728Z"),
     updatedAt: new Date("2023-07-13T10:54:38.728Z"),
     tags: [],
-    draft: false,
+    draft: true,
   },
 ];

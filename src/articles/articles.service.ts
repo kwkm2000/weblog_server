@@ -74,6 +74,18 @@ export class ArticlesService {
     });
   }
 
+  async find(): Promise<Article[]> {
+    const articles = await this.findAll();
+
+    return articles.filter((article) => !article.draft);
+  }
+
+  async findDraft(): Promise<Article[]> {
+    const articles = await this.findAll();
+
+    return articles.filter((article) => article.draft);
+  }
+
   async findOne(id: number): Promise<Article | null> {
     const article = await this.articleRepository.findOneBy({ id });
 

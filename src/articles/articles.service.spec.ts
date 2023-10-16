@@ -181,27 +181,40 @@ describe("ArticlesService", () => {
     });
   });
 
-  describe("findAll", () => {
-    it("記事全件取得", async () => {
-      const addDay = (addNumber: number): Date => {
-        const now = new Date();
-        return new Date(now.setDate(now.getDate() + addNumber));
-      };
+  describe("find", () => {
+    it("下書き中ではない記事を全件取得する", async () => {
       const mockArticleEntities = mockArticles.map((article) => {
         return { ...article, text: JSON.stringify(article.text) };
       });
       articleRepositoryMock.find.mockResolvedValueOnce(mockArticleEntities);
 
-      const result = await service.findAll();
-
-      const sortedArticles = [...mockArticles].sort((a, b) =>
-        a.createdAt > b.createdAt ? -1 : 1
-      );
+      const result = await service.find();
 
       expect(result).toEqual(
-        sortedArticles.map((mockArticle) => {
-          return { ...mockArticle, text: mockArticle.text };
-        })
+        mockArticles
+          .filter((article) => !article.draft)
+          .map((mockArticle) => {
+            return { ...mockArticle, text: mockArticle.text };
+          })
+      );
+    });
+  });
+
+  describe("findDraft", () => {
+    it("下書き中の記事全件取得", async () => {
+      const mockArticleEntities = mockArticles.map((article) => {
+        return { ...article, text: JSON.stringify(article.text) };
+      });
+      articleRepositoryMock.find.mockResolvedValueOnce(mockArticleEntities);
+
+      const result = await service.findDraft();
+
+      expect(result).toEqual(
+        mockArticles
+          .filter((article) => article.draft)
+          .map((mockArticle) => {
+            return { ...mockArticle, text: mockArticle.text };
+          })
       );
     });
   });

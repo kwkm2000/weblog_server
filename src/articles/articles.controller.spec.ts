@@ -34,15 +34,35 @@ describe("ArticlesController", () => {
     articlesController = moduleRef.get<ArticlesController>(ArticlesController);
   });
 
-  describe("findAll", () => {
-    it("記事を作成日が新しい順に全件取得", async () => {
+  describe("find", () => {
+    it("記事を作成日が新しい順にdraftがfalseの記事を全件取得", async () => {
       const result: Article[] = articlesMock;
 
       jest
-        .spyOn(articlesService, "findAll")
-        .mockImplementation(async () => result);
+        .spyOn(articlesService, "find")
+        .mockImplementation(async () =>
+          result.filter((article) => !article.draft)
+        );
 
-      expect(await articlesController.findAll()).toBe(result);
+      expect(await articlesController.find()).toEqual(
+        result.filter((article) => !article.draft)
+      );
+    });
+  });
+
+  describe("findDraft", () => {
+    it("記事を作成日が新しい順にdraftがtrueの記事を全件取得", async () => {
+      const result: Article[] = articlesMock;
+
+      jest
+        .spyOn(articlesService, "findDraft")
+        .mockImplementation(async () =>
+          result.filter((article) => article.draft)
+        );
+
+      expect(await articlesController.findDraft()).toEqual(
+        result.filter((article) => article.draft)
+      );
     });
   });
 
