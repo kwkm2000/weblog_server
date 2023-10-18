@@ -110,6 +110,7 @@ describe("ArticlesController", () => {
           },
         ],
         tagIds: [1, 2, 3],
+        draft: false,
       };
       const result: Article = {
         id: 1,

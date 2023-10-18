@@ -57,6 +57,7 @@ describe("ArticlesController (e2e)", () => {
       },
     ],
     tagIds: [1, 2, 3],
+    draft: false,
   };
 
   beforeEach(async () => {
