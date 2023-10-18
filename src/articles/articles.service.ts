@@ -21,9 +21,9 @@ export class ArticlesService {
     newArticle.title = createArticleDto.title;
     newArticle.text = JSON.stringify(createArticleDto.text);
     newArticle.headerImage = createArticleDto.headerImage;
+    newArticle.draft = createArticleDto.draft;
     newArticle.createdAt = new Date();
     newArticle.updatedAt = new Date();
-    newArticle.draft = false;
 
     if (!Array.isArray(createArticleDto.tagIds)) {
       throw new Error(

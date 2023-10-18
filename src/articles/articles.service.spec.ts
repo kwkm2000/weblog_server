@@ -80,6 +80,7 @@ describe("ArticlesService", () => {
           },
         ],
         tagIds: [1, 2, 3],
+        draft: false,
       };
 
       const tagEntity1 = new TagEntity();
