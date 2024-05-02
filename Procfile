@@ -1,1 +1,1 @@
-web: npm install -g @nestjs/cli && npm run build && npm run start
+web: npm install -g @nestjs/cli && npm ci && npm run build && npm run start
