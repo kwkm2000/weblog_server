@@ -1,0 +1,1 @@
+web: npm install -g @nestjs/cli && npm run build && npm run start
